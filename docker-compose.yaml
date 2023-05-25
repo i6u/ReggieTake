@@ -1,0 +1,77 @@
+version: "3.7"
+services:
+  mysql:
+    image: mysql
+    restart: always
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone=+8:00
+    environment:
+      TZ: Asia/Shanghai
+      LANG: C.UTF-8
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: reggie
+      MYSQL_PASSWORD: reggie
+      MYSQL_DATABASE: reggie
+    volumes:
+      - ./deploy/db/reggie.sql:/docker-entrypoint-initdb.d/reggie.sql
+    networks:
+      - reggie-net
+  redis:
+    image: redis
+    restart: always
+    command: redis-server --requirepass reggie
+    networks:
+      - reggie-net
+    environment:
+      TZ: Asia/Shanghai
+  reggie-0:
+    build:
+      context: .
+      dockerfile: deploy/backend/Dockerfile
+    restart: on-failure
+    networks:
+      - reggie-net
+    environment:
+      - "TZ=Asia/Shanghai"
+    depends_on:
+      - redis
+      - mysql
+  reggie-1:
+    build:
+      context: .
+      dockerfile: deploy/backend/Dockerfile
+    restart: on-failure
+    networks:
+      - reggie-net
+    environment:
+      - "TZ=Asia/Shanghai"
+    depends_on:
+      - redis
+      - mysql
+  reggie-2:
+    build:
+      context: .
+      dockerfile: deploy/backend/Dockerfile
+    restart: on-failure
+    networks:
+      - reggie-net
+    environment:
+      - "TZ=Asia/Shanghai"
+    depends_on:
+      - redis
+      - mysql
+  web:
+    build:
+      context: .
+      dockerfile: deploy/web/Dockerfile
+    networks:
+      - reggie-net
+    environment:
+      - "TZ=Asia/Shanghai"
+    ports:
+      - "80:80"
+    depends_on:
+      - reggie-0
+      - reggie-1
+      - reggie-2
+networks:
+  reggie-net:

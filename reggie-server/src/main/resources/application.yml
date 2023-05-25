@@ -1,0 +1,68 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev #修改成dev
+  datasource:
+    druid:
+      driver-class-name: ${reggie.datasource.driver-class-name}
+      url: jdbc:mysql://${reggie.datasource.host}:${reggie.datasource.port}/${reggie.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${reggie.datasource.username}
+      password: ${reggie.datasource.password}
+
+  redis:
+    host: ${reggie.redis.host}
+    port: ${reggie.redis.port}
+    database: ${reggie.redis.database}
+    password: ${reggie.redis.password}
+
+mybatis:
+  #mapper配置文件
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.reggie.entity
+  configuration:
+    #开启驼峰命名
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: trace
+    com:
+      reggie:
+        mapper: debug
+        service: info
+        controller: info
+
+reggie:
+  jwt:
+    # 设置jwt签名加密时使用的秘钥
+    admin-secret-key: itcast
+    # 设置jwt过期时间
+    admin-ttl: 7200000
+    # 设置前端传递过来的令牌名称
+    admin-token-name: token
+    # 设置jwt签名加密时使用的秘钥
+    user-secret-key: itheima
+    # 设置jwt过期时间
+    user-ttl: 7200000
+    # 设置前端传递过来的令牌名称
+    user-token-name: authentication
+  alioss:
+    endpoint: ${reggie.alioss.endpoint}
+    access-key-id: ${reggie.alioss.access-key-id}
+    access-key-secret: ${reggie.alioss.access-key-secret}
+    bucket-name: ${reggie.alioss.bucket-name}
+  wechat:
+    appid: ${reggie.wechat.appid}
+    secret: ${reggie.wechat.secret}
+
+knife4j:
+  enable: true
+  setting:
+    enableDebug: true
+  basic:
+    # 是否开启认证功能  true开启  false关闭
+    enable: true
+    username: test
+    password: test
